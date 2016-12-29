@@ -20,7 +20,7 @@ def reverse_word(word):
        start_index -= 2
     return rever_word + word[start_index:end_index] + " "
 
-def reverse_title(title) :
+def reverse_title(title):
     words = title.split(' ')
     words = words[0:len(words)-2]
     words = words[::-1]
