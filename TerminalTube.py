@@ -59,7 +59,7 @@ def search_song():
     br.form["search_query"] = search_query
     br.submit()
     return make_songs_list(br.links(),search_query)
-    return clear_url(br.links())
+    # return clear_url(br.links())
 
 def make_songs_list(songs,search_query):
     songs_dict = {}
@@ -99,6 +99,16 @@ def print_playlists_title():
     print "Playlists List"
     print "-" * 11
 
+def play(url):
+    subprocess.Popen(["mpv","--no-terminal","--autofit=33%","--geometry=99%:1%",url])
+
+def download(url):
+    location = "~/Developer/temp_downloads/"+songs_list['song'+str(song_num)]['name']+".%(ext)s"
+    call(["youtube-dl",'--output',location,"--extract-audio","--audio-format","mp3",url])
+    raw_input("Success, Press Any key to go back...")
+
+
+
 def songs_menu():
     print_song_title()
     max_songs = 15;
@@ -113,12 +123,10 @@ def songs_menu():
     url = 'https://www.youtube.com' + songs_list['song'+str(song_num)]['url']
     if action is 1:
         print "Playing " + songs_list['song'+str(song_num)]['name']
-        subprocess.Popen(["mpv","--no-terminal","--autofit=33%","--geometry=99%:1%",url])
+        play(url)        
     if action is 2:
         print "[*]Downloading " + songs_list['song'+str(song_num)]['name']
-        location = "~/Developer/temp_downloads/"+songs_list['song'+str(song_num)]['name']+".%(ext)s"
-        call(["youtube-dl",'--output',location,"--extract-audio","--audio-format","mp3",url])
-        raw_input("Success, Press Any key to go back...")
+        download(url)
 
 def playlists_menu():
     print_playlists_title()
@@ -133,13 +141,10 @@ def playlists_menu():
     url = 'https://www.youtube.com' + playlist_dict['song'+str(song_num)]['url']
     if action is 1:
         print "Playing " + playlist_dict['song'+str(song_num)]['name']
-        call(["mpv","--autofit=33%","--no-terminal","--geometry=99%:1%",url])
+        play(url)
     if action is 2:
         print "[*]Downloading " + playlist_dict['song'+str(song_num)]['name']
-        location = "~/Developer/temp_downloads/%(title)s.%(ext)s"
-        call(["youtube-dl","--output",location,"--extract-audio","--audio-format","mp3",url])
-        raw_input("Success, Press Any key to go back...")
-
+        download(url)
 
 
 songs_list = {}
