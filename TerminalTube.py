@@ -96,6 +96,7 @@ def print_Title():
 def print_Status_Line(msg):
     print """
     playing %s """ % msg
+
 def print_Media_Title(sub_title):
     print_Title()
     print(sub_title+"\n")
@@ -162,19 +163,23 @@ playlist_dict = {}
 search_query =""
 
 
-print_Title()
+
 
 try:
-    user_in = input("[1]:search\n[0]:exit\n\n?>")
-
-    if user_in is 1:
+    while True:
         print_Title()
-        songs_list ,playlist_dict = search_song()
+        user_in = raw_input("[1]:search\n[0]:exit\n\n?>")
 
-    elif user_in is 0:
-        print_Title()
-        print "GoodBye..."
-        sys.exit()
+        if user_in is str(1):
+            print_Title()
+            songs_list ,playlist_dict = search_song()
+            break
+        elif user_in is str(0):
+            print_Title()
+            print "GoodBye..."
+            sys.exit()
+        else:
+            pass
 
     while True:
         try:
