@@ -82,100 +82,97 @@ def make_songs_list(songs,search_query):
 
     return songs_dict,playlist_dict
 
-def print_Tilte():
+def print_Title():
     os.system('clear')
-    # print("\n"*100)
-    print ( '*'* 10)
-    print ( "TerminalTube" )
-    print ('*'*10)
+    print("""
+            \t\t\t**********************************
+            \t\t\t*                                *
+            \t\t\t *         TerminalTube         *
+            \t\t\t*                                *
+            \t\t\t**********************************
+         """)
 
-def print_song_title():
-    print_Tilte()
-    print ( "Songs List" )
-    print ("-" * 11)
 
-def print_playlists_title():
-    print_Tilte()
-    print "Playlists List"
-    print "-" * 11
+def print_Media_Title(sub_title):
+    print_Title()
+    print(sub_title+"\n")
+
+
+
 
 def play(url):
     subprocess.Popen(["mpv","--no-terminal","--autofit=33%","--geometry=99%:1%",url])
 
-def download(url):
+def download(url,song_num):
     location = "~/Developer/temp_downloads/"+songs_list['song'+str(song_num)]['name']+".%(ext)s"
     call(["youtube-dl",'--output',location,"--extract-audio","--audio-format","mp3",url])
     raw_input("Success, Press Any key to go back...")
 
 
+def menu(media_type):
+    max_items = 0
 
-def songs_menu():
-    print_song_title()
-    max_songs = 15;
-    for i in range(1,max_songs):
-        print "[%d]  %s" % (i,songs_list['song'+str(i)]['name'])
+    if media_type == 0:
+        print_Media_Title("Songs List")
+        media_list = songs_list
+        max_items = 15
+    
+    else: 
+        print_Media_Title("Playlists List")
+        media_list = playlist_dict
+        max_items = len(media_list)
+
+
+    for i in range(1,max_items):
+        print "[%d]  %s" % (i,media_list['song'+str(i)]['name'])
     print "\nPress 0 to return back."
 
-    song_num = input("\nChoose Number:\n")
-    if song_num is 0:
+    user_select = input("\nChoose Item : \n")
+    if user_select is 0:
         return
-    action = input("1: play\t2: Download\n")
-    url = 'https://www.youtube.com' + songs_list['song'+str(song_num)]['url']
-    if action is 1:
-        print "Playing " + songs_list['song'+str(song_num)]['name']
-        play(url)        
-    if action is 2:
-        print "[*]Downloading " + songs_list['song'+str(song_num)]['name']
-        download(url)
 
-def playlists_menu():
-    print_playlists_title()
-    for i in range(1,len(playlist_dict)-1):
-        print "[%d]  %s" % (i,playlist_dict['song'+str(i)]['name'])
-    print "\nPress 0 to return back."
+    action = input("1: Play\t2: Download\n")
+    url = 'https://www.youtube.com' + media_list['song'+str(user_select)]['url']
 
-    song_num = input("\nChoose Number:\n")
-    if song_num is 0:
-        return
-    action = input("1: play\t2: Download\n")
-    url = 'https://www.youtube.com' + playlist_dict['song'+str(song_num)]['url']
     if action is 1:
-        print "Playing " + playlist_dict['song'+str(song_num)]['name']
-        play(url)
-    if action is 2:
-        print "[*]Downloading " + playlist_dict['song'+str(song_num)]['name']
-        download(url)
+        print "Playing " + songs_list['song'+str(user_select)]['name']
+        play(url) 
+    elif action is 2:
+        print "[*]Downloading " + songs_list['song'+str(user_select)]['name']
+        download(url,user_select)
+
+
 
 
 songs_list = {}
 playlist_dict = {}
 search_query =""
 
-print_Tilte()
+print_Title()
 
 try:
     user_in = input("[1]:search\n[0]:exit\n\n?>")
 
     if user_in is 1:
-        print_Tilte()
+        print_Title()
         songs_list ,playlist_dict = search_song()
 
     elif user_in is 0:
-        print_Tilte()
+        print_Title()
         print "GoodBye..."
         sys.exit()
 
     while True:
         try:
-            print_Tilte()
+            print_Title()
             print "Results for '%s'\n" % search_query
             msg = "[1]:Songs (%d)\n[2]:Playlists (%d)\n[3]:New_search\n\n[0]:Exit\n\n?>" % (len(songs_list),len(playlist_dict))
             user_in = input(msg)
             if user_in is 1:
-                songs_menu()
+                menu(0)
                 pass
             elif user_in is 2:
-                playlists_menu()
+                menu(1)
                 pass
             elif user_in is 3: #new search
                 songs_list ,playlist_dict = search_song()
