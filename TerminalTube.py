@@ -133,12 +133,13 @@ def playlists_menu():
     url = 'https://www.youtube.com' + playlist_dict['song'+str(song_num)]['url']
     if action is 1:
         print "Playing " + playlist_dict['song'+str(song_num)]['name']
-        call(["mpv","--autofit=33%","--geometry=99%:1%",url])
+        call(["mpv","--autofit=33%","--no-terminal","--geometry=99%:1%",url])
     if action is 2:
         print "[*]Downloading " + playlist_dict['song'+str(song_num)]['name']
         location = "~/Developer/temp_downloads/%(title)s.%(ext)s"
         call(["youtube-dl","--output",location,"--extract-audio","--audio-format","mp3",url])
         raw_input("Success, Press Any key to go back...")
+
 
 
 songs_list = {}
