@@ -91,23 +91,23 @@ def print_Title():
             \t\t\t*                                *
             \t\t\t**********************************
          """)
+    # print_Status_Line("www")
 
-
+def print_Status_Line(msg):
+    print """
+    playing %s """ % msg
 def print_Media_Title(sub_title):
     print_Title()
     print(sub_title+"\n")
 
-
-
-
 def play(url):
-    subprocess.Popen(["mpv","--no-terminal","--autofit=33%","--geometry=99%:1%",url])
+    a = subprocess.Popen(["mpv","--no-terminal","--autofit=33%","--geometry=99%:1%",url])
+    return a
 
 def download(url,song_num):
     location = "~/Developer/temp_downloads/"+songs_list['song'+str(song_num)]['name']+".%(ext)s"
     call(["youtube-dl",'--output',location,"--extract-audio","--audio-format","mp3",url])
     raw_input("Success, Press Any key to go back...")
-
 
 def menu(media_type):
     max_items = 0
@@ -130,23 +130,37 @@ def menu(media_type):
     user_select = input("\nChoose Item : \n")
     if user_select is 0:
         return
-
-    action = input("1: Play\t2: Download\n")
+    
     url = 'https://www.youtube.com' + media_list['song'+str(user_select)]['url']
 
-    if action is 1:
+    # Mpv process object
+    proc = play(url)
+    
+    # Sub Menu
+    while True:
+        print_Title()
         print "Playing " + songs_list['song'+str(user_select)]['name']
-        play(url) 
-    elif action is 2:
-        print "[*]Downloading " + songs_list['song'+str(user_select)]['name']
-        download(url,user_select)
 
+        action = raw_input("\n[S]top [D]ownload [B]ack\n\n?>")
+        
+        if action is "d":
+            print "[*]Downloading " + songs_list['song'+str(user_select)]['name']
+            download(url,user_select)
+        elif action is "s":
+            proc.kill()
+            return
+        elif action is "b":
+            return
+
+        else:
+            pass
 
 
 
 songs_list = {}
 playlist_dict = {}
 search_query =""
+
 
 print_Title()
 
