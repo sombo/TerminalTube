@@ -21,7 +21,8 @@ def connect():
 
 	browser = mechanicalsoup.StatefulBrowser()
 	print("connecting YouTube...")
-	browser.open('https://youtube.com')
+	#browser.open('https://youtube.com')
+	browser.open('https://www.google.com')
 	return browser
 
 
@@ -29,13 +30,15 @@ def connect():
 def search(browser):
 	global query
 	query = input('search? ')
-
+	query = query + " site:youtube.com"
 	print('Searching ' + query + ' ...')
 
-	browser.select_form('form[action="/results"]')
+	#browser.select_form('form[action="/results"]')
+	browser.select_form('form[action="/search"]')
 
-	browser['search_query'] = query
-
+	#browser['search_query'] = query
+    
+	browser['q'] = query
 	res = browser.submit_selected()
 	statusBar()
 
@@ -45,35 +48,47 @@ def search(browser):
 
 def create_list(songs,query):
 	songs_dict = {}
-	list_dict = {}
+	#list_dict = {}
 	non_titles_found = 0
 	i = 1
 	j=1
 
 	for song in songs:
 		try:
-			title = song['title']
-			url = song['href']
-
-			if "watch?v" in url  and "video-time" not in song['class']:
-				if 'list' in url:
-					index = "song" + str(j)
-					list_dict[index] = {}
-					list_dict[index]['title'] = title
-					list_dict[index]['url'] = song['href']
-					j += 1
-				else:
-					index = "song" + str(i)
+			#title = song['title']
+			#url = song['href']
+			tmp_title = song.next_element.find('span')
+			title =str(tmp_title)
+			title = title[16:-16]
+			
+			url = "https://www.youtube.com/watch?v"+song['href'][43:][:11]
+			index = 1
+			if len(title) > 0:
+				if title[0] != 'y' and title[1] != 'E':
 					songs_dict[index] = {}
 					songs_dict[index]['title'] = title
-					songs_dict[index]['url'] = song['href']
-					i += 1
+					songs_dict[index]['url'] = url
+
+
+			#if "watch?v" in url  and "video-time" not in song['class']:
+			#	if 'list' in url:
+			#		index = "song" + str(j)
+			#		list_dict[index] = {}
+			#		list_dict[index]['title'] = title
+			#		list_dict[index]['url'] = song['href']
+			#		j += 1
+			#	else:
+			#		index = "song" + str(i)
+			#		songs_dict[index] = {}
+			#		songs_dict[index]['title'] = title
+			#		songs_dict[index]['url'] = song['href']
+			#		i += 1
 
 
 		except:
 			non_titles_found += 1
-
-	return songs_dict,list_dict
+	print(songs_dict)
+	return songs_dict
 
 def print_title():
     os.system('clear')
@@ -114,7 +129,7 @@ def main_menu():
 				print_title()
 				browser = connect()
 
-				songs_list, playlist_list = search(browser)
+				songs_list = search(browser)
 				break
 			elif user_selection == 'q':
 				quit_program()
